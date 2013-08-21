@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 if test "$#" -ne 3 ; then
