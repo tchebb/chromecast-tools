@@ -2,20 +2,20 @@
 set -e
 
 if test "$#" -ne 3 ; then
-	echo "Usage: $0 KERNEL INITRAMFS OUTFILE"
+	echo "Usage: $0 OUTFILE KERNEL INITRAMFS_DIR"
 	exit 1
 fi
 
+OUTFILE="$1"
+KERNEL="$2"
+INITRAMFS_DIR="$3"
+
 INITRAMFS="$(mktemp)"
-pushd "$2" >/dev/null
+pushd "$INITRAMFS_DIR" >/dev/null
 find . | cpio -o -H newc 2>/dev/null | gzip > "$INITRAMFS"
 popd >/dev/null
 
 BOOTIMG="$(mktemp)"
-mkbootimg --kernel "$1" --ramdisk "$INITRAMFS" -o "$BOOTIMG"
+cc-make-bootimg "$OUTFILE" "$KERNEL" "$INITRAMFS"
 
 rm "$INITRAMFS"
-
-./mangle_bootimg "$BOOTIMG" "$3"
-
-rm "$BOOTIMG"

@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+if test "$#" -lt 2 -o "$#" -gt 3 ; then
+	echo "Usage: $0 OUTFILE KERNEL [INITRAMFS]"
+	exit 1
+fi
+
+OUTFILE="$1"
+KERNEL="$2"
+INITRAMFS="$3"
+
+if test -z "$INITRAMFS" ; then
+	INITRAMFS="$(mktemp)"
+	DUMMY_INITRAMFS=1
+fi
+
+BOOTIMG="$(mktemp)"
+mkbootimg --kernel "$KERNEL" --ramdisk "$INITRAMFS" -o "$BOOTIMG"
+
+if test "$DUMMY_INITRAMFS" = 1 ; then
+	rm "$INITRAMFS"
+fi
+
+cc-mangle-bootimg "$BOOTIMG" "$OUTFILE"
+
+rm "$BOOTIMG"

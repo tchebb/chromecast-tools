@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+if test "$#" -lt 2 -o "$#" -gt 3 ; then
+	echo "Usage: $0 ROOTPART ROOTFS [OVERLAY]"
+	exit 1
+fi
+
+ROOTPART="$1"
+ROOTFS="$2"
+OVERLAY="$3"
+
+if test -n "$CLEAN_ROOTFS" ; then
+	echo 'Recreating filesystem...'
+	mke2fs -t ext2 -L 'cc_root' "$ROOTPART"
+fi
+
+ROOTMOUNT="$(mktemp -d)"
+mount -t ext2 "$ROOTPART" "$ROOTMOUNT"
+
+echo 'Writing files...'
+tar -x -f "$ROOTFS" -C "$ROOTMOUNT"
+
+if test -n "$OVERLAY" ; then
+	echo 'Applying overlay...'
+	rsync -a "${OVERLAY}/" "$ROOTMOUNT"
+fi
+
+umount "$ROOTMOUNT"
+rmdir "$ROOTMOUNT"

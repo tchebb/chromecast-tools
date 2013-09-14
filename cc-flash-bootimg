@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+if test "$#" -ne 2 ; then
+	echo "Usage: $0 DEVICE IMAGE"
+	exit 1
+fi
+
+DEVICE="$1"
+IMAGE="$2"
+
+# Keep the partition table intact
+dd bs=$((0x1000)) if="$IMAGE" skip=1 of="$DEVICE" seek=1
