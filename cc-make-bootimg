@@ -22,6 +22,10 @@ if test "$DUMMY_INITRAMFS" = 1 ; then
 	rm "$INITRAMFS"
 fi
 
-cc-mangle-bootimg "$BOOTIMG" "$OUTFILE"
+if test -n "$BOOTIMG_USB_PADDING" ; then
+	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0x1000
+else
+	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0
+fi
 
 rm "$BOOTIMG"

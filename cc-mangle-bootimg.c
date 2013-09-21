@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 int main (int argc, char **argv) {
-	if (argc != 3) {
-		fprintf(stderr, "Usage: %s INFILE OUTFILE\n", argv[0]);
+	if (argc != 4) {
+		fprintf(stderr, "Usage: %s INFILE OUTFILE PADDING\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -19,9 +19,20 @@ int main (int argc, char **argv) {
 	long in_len = ftell(in);
 	rewind(in);
 
-	// Write the USB image padding.
+	// Write the requested padding.
+	char *endptr;
+	long padding_len = strtol(argv[3], &endptr, 0);
+	if (*argv[3] == '\0' || *endptr != '\0') {
+		fprintf(stderr, "Invalid padding value\n");
+		exit(EXIT_FAILURE);
+	}
+
 	char buffer[0x1000] = {0};
-	fwrite(buffer, 1, 0x1000, out);
+	while (padding_len >= 0x1000) {
+		fwrite(buffer, 1, 0x1000, out);
+		padding_len -= 0x1000;
+	}
+	fwrite(buffer, 1, padding_len, out);
 
 	// Read in the Android header, but don't write it back out just yet.
 	char header[0x240] = {0};
