@@ -1,14 +1,15 @@
 #!/bin/sh
 set -e
 
-if test "$#" -lt 2 -o "$#" -gt 3 ; then
-	echo "Usage: $0 OUTFILE KERNEL [INITRAMFS]"
+if test "$#" -lt 3 -o "$#" -gt 4 ; then
+	echo "Usage: $0 TYPE OUTFILE KERNEL [INITRAMFS]"
 	exit 1
 fi
 
-OUTFILE="$1"
-KERNEL="$2"
-INITRAMFS="$3"
+TYPE="$1"
+OUTFILE="$2"
+KERNEL="$3"
+INITRAMFS="$4"
 
 if test -z "$INITRAMFS" ; then
 	INITRAMFS="$(mktemp)"
@@ -22,10 +23,12 @@ if test "$DUMMY_INITRAMFS" = 1 ; then
 	rm "$INITRAMFS"
 fi
 
-if test -n "$BOOTIMG_USB_PADDING" ; then
-	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0x1000
+if test "$TYPE" = 'nand' ; then
+	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0x2
+elif test "$TYPE" = 'usb' ; then
+	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0x82
 else
-	cc-mangle-bootimg "$BOOTIMG" "$OUTFILE" 0
+	echo "TYPE must be either \"usb\" or \"nand\""
 fi
 
 rm "$BOOTIMG"

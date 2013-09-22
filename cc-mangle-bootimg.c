@@ -3,7 +3,7 @@
 
 int main (int argc, char **argv) {
 	if (argc != 4) {
-		fprintf(stderr, "Usage: %s INFILE OUTFILE PADDING\n", argv[0]);
+		fprintf(stderr, "Usage: %s INFILE OUTFILE KEYID\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
@@ -19,27 +19,21 @@ int main (int argc, char **argv) {
 	long in_len = ftell(in);
 	rewind(in);
 
-	// Write the requested padding.
-	char *endptr;
-	long padding_len = strtol(argv[3], &endptr, 0);
-	if (*argv[3] == '\0' || *endptr != '\0') {
-		fprintf(stderr, "Invalid padding value\n");
-		exit(EXIT_FAILURE);
-	}
-
-	char buffer[0x1000] = {0};
-	while (padding_len >= 0x1000) {
-		fwrite(buffer, 1, 0x1000, out);
-		padding_len -= 0x1000;
-	}
-	fwrite(buffer, 1, padding_len, out);
-
 	// Read in the Android header, but don't write it back out just yet.
 	char header[0x240] = {0};
 	fread(header, 1, 0x240, in);
 
 	// Add the signature magic.
-	*((unsigned*)(header + 0x40)) = 0x82;
+	char *endptr;
+	long key_id = strtol(argv[3], &endptr, 0);
+	if (*argv[3] == '\0' || *endptr != '\0') {
+		fprintf(stderr, "Invalid key ID\n");
+		exit(EXIT_FAILURE);
+	}
+	if (key_id != 0x2 && key_id != 0x82) {
+		fprintf(stderr, "Warning: Key ID is neither 0x2 (NAND) nor 0x82 (USB)\n");
+	}
+	*((unsigned*)(header + 0x40)) = (unsigned) key_id;
 
 	// Add the length. The bootloader will add the 0x80 back on.
 	*((unsigned*)(header + 0x7c)) = (unsigned)in_len - 0x80;
@@ -48,6 +42,7 @@ int main (int argc, char **argv) {
 	fwrite(header, 1, 0x240, out);
 
 	// Copy the rest of the file in 4k chunks.
+	char buffer[0x1000] = {0};
 	size_t i;
 	while ((i = fread(buffer, 1, 0x1000, in)) != 0)
 		fwrite(buffer, 1, i, out);
