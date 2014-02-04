@@ -20,10 +20,12 @@ mount -t ext2 "$ROOTPART" "$ROOTMOUNT"
 
 echo 'Writing files...'
 tar -x -f "$ROOTFS" -C "$ROOTMOUNT"
+sync
 
 if test -n "$OVERLAY" ; then
 	echo 'Applying overlay...'
 	rsync -a "${OVERLAY}/" "$ROOTMOUNT"
+	sync
 fi
 
 umount "$ROOTMOUNT"
