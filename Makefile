@@ -1,3 +1,9 @@
+BINARIES = cc-mangle-bootimg
 CFLAGS = -Wall -Wextra
 
-all: cc-mangle-bootimg
+all: $(BINARIES)
+
+clean:
+	-rm -f $(BINARIES) *.o
+
+.PHONY: clean
