@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+if test "$#" -lt 1 -o "$#" -gt 2 ; then
+	echo "Usage: $0 INFILE [OUTFILE]"
+	exit 1
+fi
+
+INFILE="$1"
+if test "$#" -eq 1 ; then
+	INPLACE=1
+	OUTFILE="$(mktemp)"
+else
+	INPLACE=0
+	OUTFILE="$2"
+fi
+
+dd bs="$((0x100))" if="$INFILE" of="$OUTFILE" skip=1
+
+if test "$INPLACE" = 1 ; then
+	mv "$OUTFILE" "$INFILE"
+fi

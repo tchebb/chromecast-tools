@@ -25,6 +25,9 @@ Tools
     image can be flashed to a USB drive using `cc-flash-bootimg`.
 - `cc-pack-bootimg`: Wrapper around `cc-make-bootimg` that additionally creates
     the initramfs from a directory (rather than expecting a prepacked archive).
+- `cc-strip-bootimg`: Remove the Marvell cryptographic header from an official
+    boot image so that it can be recognized and parsed by standard tools such
+    as `abootimg`.
 - `cc-flash-bootimg`: Writes a mangled bootimg to a USB drive at the correct
     offset for the Chromecast to boot from. Does not affect partition table.
 - `cc-flash-rootfs`: Creates an ext2 filesystem on the given partition and
