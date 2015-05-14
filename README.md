@@ -13,7 +13,7 @@ Tools
     check is actually performed. An unfortunate side-effect of the mangling
     is that any kernel command line specified in the Android header will be
     overwritten. Thus, any required kernel parameters must be compiled into
-    the kernel image. The key id embedded in the cryptographic header should
+    the kernel image. The key ID embedded in the cryptographic header should
     be `0x02` for NAND boot and `0x82` for USB boot. `cc-make-bootimg` wraps
     this program, so you won't usually need to manually invoke it.
 - `cc-make-bootimg`: Uses Android's `mkbootimg` to pack the given kernel and
