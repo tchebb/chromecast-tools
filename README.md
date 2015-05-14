@@ -23,9 +23,9 @@ Tools
     booted from a USB drive or the Chromecast's internal storage. The image will
     fail to boot if the wrong type is used. If the type is `usb`, the generated
     image can be flashed to a USB drive using `cc-flash-bootimg`.
-- `cc-pack-bootimg`: Wrapper around `cc-make-bootimg` that additionally creates
-    the initramfs from a directory (rather than expecting a prepacked archive).
-- `cc-strip-bootimg`: Remove the Marvell cryptographic header from an official
+- `cc-pack-bootimg`: Wraps `cc-make-bootimg`, packing the contents of the given
+    directory to create the initramfs.
+- `cc-strip-bootimg`: Removes the Marvell cryptographic header from an official
     boot image so that it can be recognized and parsed by standard tools such
     as `abootimg`.
 - `cc-flash-bootimg`: Writes a mangled bootimg to a USB drive at the correct
