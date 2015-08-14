@@ -33,7 +33,7 @@ int main (int argc, char **argv) {
 	if (key_id != 0x2 && key_id != 0x82) {
 		fprintf(stderr, "Warning: Key ID is neither 0x2 (NAND) nor 0x82 (USB)\n");
 	}
-	*((unsigned*)(header + 0x40)) = (unsigned) key_id;
+	*((unsigned*)(header + 0x40)) = (unsigned)key_id;
 
 	// Add the length. The bootloader will add the 0x80 back on.
 	*((unsigned*)(header + 0x7c)) = (unsigned)in_len - 0x80;
