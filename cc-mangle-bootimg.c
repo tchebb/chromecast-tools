@@ -20,7 +20,7 @@ int main (int argc, char **argv) {
 	rewind(in);
 
 	// Read in the Android header, but don't write it back out just yet.
-	char header[0x240] = {0};
+	unsigned char header[0x240] = {0};
 	fread(header, 1, 0x240, in);
 
 	// Add the signature magic.
@@ -42,7 +42,7 @@ int main (int argc, char **argv) {
 	fwrite(header, 1, 0x240, out);
 
 	// Copy the rest of the file in 4k chunks.
-	char buffer[0x1000] = {0};
+	unsigned char buffer[0x1000] = {0};
 	size_t i;
 	while ((i = fread(buffer, 1, 0x1000, in)) != 0)
 		fwrite(buffer, 1, i, out);
